@@ -43,7 +43,139 @@ function animateZzz(el, delay) {
 }
 
 const pages = [
- // ...existing pages array and logic from index.html...
+  {
+    text: "Once upon a time, there was a kind big sister named Kea and her baby brother, Tlotlo.",
+    build() {
+      scene.innerHTML = `
+        <div class="character kea pop">👧<span class="label">Kea</span></div>
+        <div class="character baby pop pop-d1">👶<span class="label">Baby Tlotlo</span></div>
+      `;
+    },
+    async play() {
+      const rect = scene.getBoundingClientRect();
+      spawnStars(rect.width * 0.3, rect.height * 0.5, 6);
+      await wait(400);
+      spawnHearts(rect.width * 0.7, rect.height * 0.5, 5);
+    }
+  },
+  {
+    text: "Kea loved taking care of Baby Tlotlo. She would sing songs and make him laugh!",
+    build() {
+      scene.innerHTML = `
+        <div class="character kea pop breathing">👧<span class="label">Kea</span></div>
+        <div class="character baby pop pop-d1 bounce">👶<span class="label">Baby Tlotlo</span></div>
+        <div class="speech pop pop-d2">🎵 La la la! 🎵</div>
+      `;
+    },
+    async play() {
+      const rect = scene.getBoundingClientRect();
+      spawnHearts(rect.width * 0.5, rect.height * 0.4, 8);
+      await wait(600);
+      spawnStars(rect.width * 0.3, rect.height * 0.35, 5);
+    }
+  },
+  {
+    text: "One sunny day, Mum made them delicious warm drinks.",
+    build() {
+      scene.innerHTML = `
+        <div class="character mum pop">👩<span class="label">Mum</span></div>
+        <div class="cup c1 pop pop-d1">☕</div>
+        <div class="cup c2 pop pop-d2">🍼</div>
+      `;
+    },
+    async play() {
+      const rect = scene.getBoundingClientRect();
+      spawnStars(rect.width * 0.5, rect.height * 0.4, 7);
+    }
+  },
+  {
+    text: '"Here you go, my loves!" said Mum with a warm smile.',
+    build() {
+      scene.innerHTML = `
+        <div class="character mum pop wiggle">👩<span class="label">Mum</span></div>
+        <div class="character kea pop pop-d1">👧<span class="label">Kea</span></div>
+        <div class="character baby pop pop-d2">👶<span class="label">Baby Tlotlo</span></div>
+        <div class="speech pop pop-d3">Here you go, my loves! 💕</div>
+      `;
+    },
+    async play() {
+      const rect = scene.getBoundingClientRect();
+      spawnHearts(rect.width * 0.5, rect.height * 0.3, 10);
+    }
+  },
+  {
+    text: "Kea helped Baby Tlotlo drink his warm milk. He was so happy!",
+    build() {
+      scene.innerHTML = `
+        <div class="character kea pop">👧<span class="label">Kea</span></div>
+        <div class="character baby pop pop-d1 bounce">👶<span class="label">Baby Tlotlo</span></div>
+        <div class="cup c2 pop pop-d2">🍼</div>
+      `;
+    },
+    async play() {
+      const rect = scene.getBoundingClientRect();
+      spawnHearts(rect.width * 0.5, rect.height * 0.5, 6);
+      await wait(300);
+      spawnStars(rect.width * 0.6, rect.height * 0.45, 4);
+    }
+  },
+  {
+    text: "After the warm drink, Baby Tlotlo started to feel very sleepy...",
+    build() {
+      scene.innerHTML = `
+        <div class="character kea pop">👧<span class="label">Kea</span></div>
+        <div class="character baby pop pop-d1">👶<span class="label">Baby Tlotlo</span></div>
+        <div class="zzz" id="zzz1">z</div>
+        <div class="zzz" id="zzz2">Z</div>
+        <div class="zzz" id="zzz3">z</div>
+      `;
+    },
+    async play() {
+      animateZzz(document.getElementById("zzz1"), 0);
+      animateZzz(document.getElementById("zzz2"), 300);
+      animateZzz(document.getElementById("zzz3"), 600);
+    }
+  },
+  {
+    text: "Kea gently rocked Baby Tlotlo and whispered, 'Sleep tight, little one.'",
+    build() {
+      scene.innerHTML = `
+        <div class="character kea pop breathing">👧<span class="label">Kea</span></div>
+        <div class="character baby pop pop-d1">👶<span class="label">Baby Tlotlo</span></div>
+        <div class="speech pop pop-d2">Sleep tight, little one 🌙</div>
+        <div class="zzz" id="zzz1">z</div>
+        <div class="zzz" id="zzz2">Z</div>
+      `;
+    },
+    async play() {
+      animateZzz(document.getElementById("zzz1"), 0);
+      animateZzz(document.getElementById("zzz2"), 400);
+      await wait(500);
+      const rect = scene.getBoundingClientRect();
+      spawnHearts(rect.width * 0.3, rect.height * 0.35, 5);
+    }
+  },
+  {
+    text: "And Baby Tlotlo fell fast asleep, dreaming happy dreams. The End! 💫",
+    build() {
+      scene.innerHTML = `
+        <div class="character kea pop bounce">👧<span class="label">Kea</span></div>
+        <div class="character baby pop pop-d1">👶<span class="label">Baby Tlotlo</span></div>
+        <div class="zzz" id="zzz1">Z</div>
+        <div class="zzz" id="zzz2">z</div>
+        <div class="zzz" id="zzz3">Z</div>
+      `;
+    },
+    async play() {
+      animateZzz(document.getElementById("zzz1"), 0);
+      animateZzz(document.getElementById("zzz2"), 250);
+      animateZzz(document.getElementById("zzz3"), 500);
+      await wait(700);
+      const rect = scene.getBoundingClientRect();
+      spawnStars(rect.width * 0.5, rect.height * 0.35, 12);
+      spawnHearts(rect.width * 0.5, rect.height * 0.35, 8);
+    }
+  }
 ];
 
 let current = 0;

@@ -56,10 +56,12 @@ body::after{
 .sub{font-size:.92rem;opacity:.6;margin-top:2px;font-weight:500}
 .stage{
  display:grid;
- grid-template-columns:1.35fr .65fr;
+ grid-template-columns:.65fr 1.35fr;
  gap:14px;
  align-items:stretch;
 }
+.scene-wrap{order:2}
+.card{order:1}
 .scene-wrap{
  position:relative;
  border-radius:var(--r);
@@ -96,6 +98,11 @@ body::after{
 @keyframes drift{from{transform:translateX(0)}to{transform:translateX(calc(100% + 700px))}}
 .scene{
  position:absolute;inset:0;z-index:3;
+ display:flex;
+ align-items:flex-end;
+ justify-content:center;
+ padding:20px 30px 120px;
+ gap:20px;
 }
 .particles{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
 .card{
@@ -135,12 +142,13 @@ body::after{
 .btn.primary:hover:not(:disabled){background:#e85a3a}
 .foot{text-align:center;margin-top:12px;opacity:.45;font-size:.8rem}
 .character{
- position:absolute;bottom:85px;
+ position:relative;
  width:125px;height:165px;border-radius:24px;
  display:flex;align-items:center;justify-content:center;
  font-size:56px;user-select:none;z-index:2;
  transition:transform .25s ease;
  border:3px solid rgba(255,255,255,.55);
+ flex-shrink:0;
 }
 .character:hover{transform:scale(1.06) rotate(-2deg)}
 .character .label{
@@ -149,26 +157,29 @@ body::after{
  white-space:nowrap;letter-spacing:.3px;color:var(--ink);
  pointer-events:none;
 }
-.mimo{left:45px;background:var(--soft-pink)}
-.mum{right:45px;background:var(--soft-green)}
-.kea{left:55px;background:var(--soft-yellow)}
-.baby{right:55px;background:var(--soft-purple)}
+.mimo{background:var(--soft-pink)}
+.mum{background:var(--soft-green)}
+.kea{background:var(--soft-yellow)}
+.baby{background:var(--soft-purple)}
 .cup{
- position:absolute;bottom:108px;
+ position:relative;
  width:64px;height:54px;border-radius:10px 10px 16px 16px;
  display:flex;align-items:center;justify-content:center;
  font-size:15px;font-weight:800;color:#fff;z-index:2;
  box-shadow:0 5px 14px rgba(0,0,0,.12);
  text-shadow:0 1px 2px rgba(0,0,0,.15);
+ flex-shrink:0;
 }
 .c1{background:linear-gradient(135deg,#ff8fab,#ff6b8a)}
 .c2{background:linear-gradient(135deg,#7ec8e3,#5aa9ff)}
 .c3{background:linear-gradient(135deg,#ffc857,#ffb030)}
 .speech{
- position:absolute;max-width:230px;
+ position:relative;max-width:230px;
  background:white;border-radius:18px;padding:10px 14px;
  box-shadow:0 4px 18px rgba(0,0,0,.08);font-weight:700;font-size:1rem;
  z-index:5;line-height:1.3;border:2px solid rgba(0,0,0,.04);
+ align-self:flex-start;
+ margin-top:-80px;
 }
 .speech::after{
  content:'';position:absolute;bottom:-10px;left:26px;
@@ -177,9 +188,12 @@ body::after{
  border-top:11px solid white;
 }
 .zzz{
- position:absolute;font-size:26px;font-weight:900;color:#7c6bff;
+ position:relative;font-size:26px;font-weight:900;color:#7c6bff;
  z-index:3;text-shadow:0 2px 8px rgba(124,107,255,.3);
  opacity:0;
+ align-self:flex-start;
+ margin-top:-60px;
+ margin-left:-30px;
 }
 .particle{position:absolute;pointer-events:none;opacity:0;z-index:4}
 @keyframes popIn{
@@ -205,18 +219,24 @@ body::after{
 .text-enter{animation:textSlide .4s ease-out both}
 @media(max-width:860px){
  .stage{grid-template-columns:1fr}
- .scene-wrap{min-height:320px!important}
- .card{min-height:auto}
- .character{width:100px;height:135px;font-size:44px;bottom:78px}
+ .scene-wrap{min-height:320px!important;order:1}
+ .card{min-height:auto;order:2}
+ .scene{padding:15px 20px 100px;gap:15px}
+ .character{width:100px;height:135px;font-size:44px}
  .character .label{font-size:10px;bottom:-16px}
- .mimo{left:20px}.mum{right:20px}.kea{left:25px}.baby{right:25px}
- .cup{width:52px;height:44px;font-size:13px;bottom:95px}
- .speech{font-size:.88rem;max-width:180px;padding:8px 10px}
+ .cup{width:52px;height:44px;font-size:13px}
+ .speech{font-size:.88rem;max-width:180px;padding:8px 10px;margin-top:-60px}
+ .zzz{font-size:22px;margin-top:-50px;margin-left:-20px}
  .story{font-size:1.2rem}
 }
 @media(max-width:480px){
  .top h1{font-size:1.5rem}
- .scene-wrap{min-height:280px!important}
- .character{width:80px;height:110px;font-size:36px;bottom:72px}
- .cup{width:44px;height:38px;font-size:11px;bottom:85px}
+ .scene-wrap{min-height:260px!important}
+ .scene{padding:10px 15px 90px;gap:10px}
+ .character{width:75px;height:100px;font-size:32px}
+ .character .label{font-size:9px;bottom:-14px}
+ .cup{width:40px;height:35px;font-size:10px}
+ .speech{font-size:.8rem;max-width:140px;padding:6px 8px;margin-top:-50px}
+ .zzz{font-size:18px;margin-top:-40px;margin-left:-15px}
+ .floor{height:80px}
 }
