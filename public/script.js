@@ -59,7 +59,7 @@ const pages = [
     }
   },
   {
-    text: "Kea loved taking care of Baby Tlotlo. She would sing songs and make him laugh!",
+    text: "Kea loved taking care of Baby Tlotlo. She would sing songs and make her laugh!",
     build() {
       scene.innerHTML = `
         <div class="character kea pop breathing">👧<span class="label">Kea</span></div>
