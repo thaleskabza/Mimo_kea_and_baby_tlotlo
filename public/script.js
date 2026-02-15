@@ -104,7 +104,7 @@ const pages = [
     }
   },
   {
-    text: "Kea helped Baby Tlotlo drink his warm milk. He was so happy!",
+    text: "Kea helped Baby Tlotlo drink his warm milk. She was so happy!",
     build() {
       scene.innerHTML = `
         <div class="character kea pop">👧<span class="label">Kea</span></div>
