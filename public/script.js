@@ -8,8 +8,45 @@ const dotsEl     = document.getElementById("dots");
 const prevBtn    = document.getElementById("prevBtn");
 const nextBtn    = document.getElementById("nextBtn");
 const playBtn    = document.getElementById("playBtn");
+const card       = document.querySelector(".card");
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
+
+// Book flip animation
+let flipping = false;
+async function flipPage(direction) {
+  if (flipping) return;
+  flipping = true;
+
+  const flipClass = direction === 'next' ? 'flip-next' : 'flip-prev';
+
+  // Add flip animation to both sides
+  sceneWrap.classList.add(flipClass);
+  card.classList.add(flipClass);
+
+  // Wait for half the animation, then change content
+  await wait(350);
+
+  // Update page content mid-flip
+  const p = pages[current];
+  particles.innerHTML = "";
+  p.build();
+  storyText.textContent = p.text;
+  pageNum.textContent = String(current + 1);
+
+  // Wait for animation to complete
+  await wait(350);
+
+  // Remove animation classes
+  sceneWrap.classList.remove(flipClass);
+  card.classList.remove(flipClass);
+
+  prevBtn.disabled = current === 0;
+  nextBtn.disabled = current === pages.length - 1;
+  updateDots();
+
+  flipping = false;
+}
 
 function spawnParticles(x, y, emojis, count) {
  for (let i = 0; i < count; i++) {
@@ -187,7 +224,13 @@ function buildDots() {
 	 const d = document.createElement("button");
 	 d.className = "dot" + (i === current ? " active" : "");
 	 d.setAttribute("aria-label", "Page " + (i + 1));
-	 d.addEventListener("click", () => { if (!playing) { current = i; renderPage(); } });
+	 d.addEventListener("click", () => {
+	   if (!playing && !flipping && i !== current) {
+	     const direction = i > current ? 'next' : 'prev';
+	     current = i;
+	     flipPage(direction);
+	   }
+	 });
 	 dotsEl.appendChild(d);
  });
 }
@@ -219,15 +262,15 @@ function renderPage() {
 }
 
 prevBtn.addEventListener("click", () => {
- if (current > 0 && !playing) { current--; renderPage(); }
+ if (current > 0 && !playing && !flipping) { current--; flipPage('prev'); }
 });
 nextBtn.addEventListener("click", () => {
- if (current < pages.length - 1 && !playing) { current++; renderPage(); }
+ if (current < pages.length - 1 && !playing && !flipping) { current++; flipPage('next'); }
 });
 document.addEventListener("keydown", e => {
- if (playing) return;
- if (e.key === "ArrowLeft" && current > 0) { current--; renderPage(); }
- if (e.key === "ArrowRight" && current < pages.length - 1) { current++; renderPage(); }
+ if (playing || flipping) return;
+ if (e.key === "ArrowLeft" && current > 0) { current--; flipPage('prev'); }
+ if (e.key === "ArrowRight" && current < pages.length - 1) { current++; flipPage('next'); }
  if (e.key === " " || e.key === "Enter") { e.preventDefault(); playBtn.click(); }
 });
 
