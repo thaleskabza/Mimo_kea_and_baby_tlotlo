@@ -44,7 +44,7 @@ function animateZzz(el, delay) {
 
 const pages = [
   {
-    text: "Once upon a time, there was a kind big sister named Kea and her baby brother, Tlotlo.",
+    text: "Once upon a time, there was a kind big sister named Kea and her baby sister, Tlotlo.",
     build() {
       scene.innerHTML = `
         <div class="character kea pop">👧<span class="label">Kea</span></div>
