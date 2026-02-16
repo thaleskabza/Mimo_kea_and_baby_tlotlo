@@ -46,7 +46,7 @@ body::after{
 }
 
 .app{max-width:1060px;margin:0 auto;padding:14px 16px 24px;position:relative;z-index:1}
-.top{text-align:center;margin-bottom:14px}
+.top{text-align:center;margin-bottom:14px;position:relative}
 .top h1{
  font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;
  background:linear-gradient(135deg,var(--primary),#e84393,var(--accent));
@@ -54,6 +54,24 @@ body::after{
  letter-spacing:-.4px;
 }
 .sub{font-size:.92rem;opacity:.6;margin-top:2px;font-weight:500}
+
+/* sound toggle */
+.sound-toggle{
+ position:absolute;top:0;right:0;
+ background:rgba(255,255,255,.85);border:2px solid rgba(0,0,0,.08);
+ border-radius:50%;width:42px;height:42px;
+ font-size:20px;cursor:pointer;
+ transition:all .2s ease;
+ display:flex;align-items:center;justify-content:center;
+ box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.sound-toggle:hover{
+ transform:scale(1.1);
+ box-shadow:0 3px 12px rgba(0,0,0,.12);
+}
+.sound-toggle:active{transform:scale(0.95)}
+.sound-toggle.muted{opacity:.4}
+
 .stage{
  display:flex;
  gap:0;
