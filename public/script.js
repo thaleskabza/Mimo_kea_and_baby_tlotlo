@@ -9,14 +9,160 @@ const prevBtn    = document.getElementById("prevBtn");
 const nextBtn    = document.getElementById("nextBtn");
 const playBtn    = document.getElementById("playBtn");
 const card       = document.querySelector(".card");
+const soundToggle = document.getElementById("soundToggle");
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
+
+// ===== SOUND SYSTEM =====
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let soundEnabled = true;
+
+// Initialize audio context on first user interaction
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new AudioContext();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+// Page flip sound - like turning a book page
+function playFlipSound() {
+  if (!audioCtx || !soundEnabled) return;
+  
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  
+  // Swoosh sound effect
+  osc.frequency.setValueAtTime(200, now);
+  osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+  osc.type = 'sine';
+  
+  gain.gain.setValueAtTime(0.15, now);
+  gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+  
+  osc.start(now);
+  osc.stop(now + 0.2);
+}
+
+// Baby giggle sound - cute and playful
+function playBabyGiggle() {
+  if (!audioCtx || !soundEnabled) return;
+  
+  const now = audioCtx.currentTime;
+  
+  // Create multiple oscillators for a giggle effect
+  for (let i = 0; i < 3; i++) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    const startTime = now + i * 0.08;
+    const freq = 800 + Math.random() * 200;
+    
+    osc.frequency.setValueAtTime(freq, startTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.5, startTime + 0.06);
+    osc.type = 'sine';
+    
+    gain.gain.setValueAtTime(0.08, startTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.1);
+    
+    osc.start(startTime);
+    osc.stop(startTime + 0.1);
+  }
+}
+
+// Baby coo sound - soft and gentle
+function playBabyCoo() {
+  if (!audioCtx || !soundEnabled) return;
+  
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  
+  osc.frequency.setValueAtTime(400, now);
+  osc.frequency.exponentialRampToValueAtTime(500, now + 0.15);
+  osc.frequency.exponentialRampToValueAtTime(350, now + 0.3);
+  osc.type = 'sine';
+  
+  gain.gain.setValueAtTime(0.1, now);
+  gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+  
+  osc.start(now);
+  osc.stop(now + 0.3);
+}
+
+// Baby babble sound - playful talking
+function playBabyBabble() {
+  if (!audioCtx || !soundEnabled) return;
+  
+  const now = audioCtx.currentTime;
+  const frequencies = [600, 500, 700, 550];
+  
+  frequencies.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    const startTime = now + i * 0.12;
+    
+    osc.frequency.setValueAtTime(freq, startTime);
+    osc.type = 'triangle';
+    
+    gain.gain.setValueAtTime(0.06, startTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.1);
+    
+    osc.start(startTime);
+    osc.stop(startTime + 0.1);
+  });
+}
+
+// Baby yawn sound - gentle and sleepy
+function playBabyYawn() {
+  if (!audioCtx || !soundEnabled) return;
+  
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  
+  osc.frequency.setValueAtTime(300, now);
+  osc.frequency.exponentialRampToValueAtTime(250, now + 0.4);
+  osc.frequency.exponentialRampToValueAtTime(200, now + 0.8);
+  osc.type = 'sine';
+  
+  gain.gain.setValueAtTime(0.08, now);
+  gain.gain.setValueAtTime(0.08, now + 0.3);
+  gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+  
+  osc.start(now);
+  osc.stop(now + 0.8);
+}
 
 // Book flip animation
 let flipping = false;
 async function flipPage(direction) {
   if (flipping) return;
   flipping = true;
+
+  // Play page flip sound
+  initAudio();
+  playFlipSound();
 
   const flipClass = direction === 'next' ? 'flip-next' : 'flip-prev';
 
@@ -89,6 +235,7 @@ const pages = [
       `;
     },
     async play() {
+      playBabyCoo();
       const rect = scene.getBoundingClientRect();
       spawnStars(rect.width * 0.3, rect.height * 0.5, 6);
       await wait(400);
@@ -105,6 +252,7 @@ const pages = [
       `;
     },
     async play() {
+      playBabyGiggle();
       const rect = scene.getBoundingClientRect();
       spawnHearts(rect.width * 0.5, rect.height * 0.4, 8);
       await wait(600);
@@ -136,6 +284,7 @@ const pages = [
       `;
     },
     async play() {
+      playBabyBabble();
       const rect = scene.getBoundingClientRect();
       spawnHearts(rect.width * 0.5, rect.height * 0.3, 10);
     }
@@ -150,6 +299,7 @@ const pages = [
       `;
     },
     async play() {
+      playBabyGiggle();
       const rect = scene.getBoundingClientRect();
       spawnHearts(rect.width * 0.5, rect.height * 0.5, 6);
       await wait(300);
@@ -168,6 +318,7 @@ const pages = [
       `;
     },
     async play() {
+      playBabyYawn();
       animateZzz(document.getElementById("zzz1"), 0);
       animateZzz(document.getElementById("zzz2"), 300);
       animateZzz(document.getElementById("zzz3"), 600);
@@ -276,6 +427,10 @@ document.addEventListener("keydown", e => {
 
 playBtn.addEventListener("click", async () => {
  if (playing || playBtn.disabled) return;
+ 
+ // Initialize audio on first interaction
+ initAudio();
+ 
  playing = true;
  playBtn.disabled = true;
  playBtn.textContent = "\u2728 Playing...";
@@ -298,3 +453,16 @@ playBtn.addEventListener("click", async () => {
 buildDots();
 renderPage();
 
+// Sound toggle button
+soundToggle.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+  soundToggle.classList.toggle('muted', !soundEnabled);
+  soundToggle.title = soundEnabled ? 'Mute sounds' : 'Unmute sounds';
+  
+  // Play a test sound when enabling
+  if (soundEnabled) {
+    initAudio();
+    playBabyCoo();
+  }
+});
