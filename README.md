@@ -1,119 +1,149 @@
-"""
+“””
 DashboardPage - Page Object for FX Trading Dashboard
 
 Handles:
+
 - Dashboard navigation
 - Menu interactions
-- Quick stats viewing
-"""
+- FX Web App widget launching
+- Dashboard validation
 
-from playwright.sync_api import Page
+Note: Tenor menu interactions have been moved to DealPage / RFQPage
+where they logically belong.
+“””
+
+from playwright.sync_api import Page, Locator
 import allure
 from .base_page import BasePage
 
-
 class DashboardPage(BasePage):
-    """Page object for FX Trading dashboard."""
-    
-    # ========================================================================
-    # LOCATORS
-    # ========================================================================
-    
-    # FX Web App Widget (NEW - direct approach from codegen)
-    FX_WEB_APP_WIDGET = "solar-starlink-widget"
-    FX_WEB_APP_BUTTON = "solar-starlink-widget >> button"
-    
-    # Navigation menu
-    DEALS_MENU = "text=Deals"
-    ORDERS_MENU = "text=Orders"
-    SETTINGS_MENU = "text=Settings"
-    TRADE_MANAGER_LINK = "a[href*='trade-manager'], link[name='Trade Manager']"
-    
-    # Dashboard tiles
-    DEAL_TILE = "div[data-testid='deal-tile'], div:has-text('Deal')"
-    ORDER_TILE = "div[data-testid='order-tile'], div:has-text('Order')"
-    
-    # User menu
-    USER_MENU = "button[aria-label='User menu'], div[class*='user-menu']"
-    LOGOUT_BUTTON = "button:has-text('Logout'), a:has-text('Logout')"
-    
-    # ========================================================================
-    # ACTIONS
-    # ========================================================================
-    
-    @allure.step("Launch FX Web App from widget")
-    def launch_fx_web_app(self):
-        """Launch FX Web App directly from dashboard widget (NEW preferred method from codegen)."""
-        # Wait for the widget to be available
-        self.wait_for_selector(self.FX_WEB_APP_WIDGET, state="visible")
-        # Click the launch button in the widget - using EXACT filter text from codegen
-        widget = self.page.locator(self.FX_WEB_APP_WIDGET).filter(has_text="FX Web App Quick and easy")
-        widget.get_by_role("button").click()
-        self.wait_for_load_state("networkidle")
-    
-    @allure.step("Open tenor menu")
-    def open_tenor_menu(self):
-        """
-        Click the tenor menu button to enable tenor selection.
-        The label contains dynamic month/year (e.g., 'SP | Spot - 2026/03/').
-        Uses filter to find button containing 'SP | Spot' text.
-        """
-        # Use filter instead of regex in get_by_role
-        # Find button with role that contains "SP | Spot"
-        tenor_button = self.page.get_by_role("button").filter(has_text="SP | Spot")
-        tenor_button.first.click()
-        self.page.wait_for_timeout(500)
-    
-    @allure.step("Navigate to Trade Manager")
-    def navigate_to_trade_manager(self):
-        """Navigate to Trade Manager page."""
-        self.page.get_by_role("link", name="Trade Manager").click()
-        self.wait_for_load_state("networkidle")
-    
-    @allure.step("Navigate to Deals page")
-    def navigate_to_deals(self):
-        """Navigate to Deals page."""
-        # Wait for the deals menu to be available
-        self.wait_for_selector(self.DEALS_MENU, state="visible")
-        # Scroll into view and click
-        self.page.locator(self.DEALS_MENU).scroll_into_view_if_needed()
-        self.click(self.DEALS_MENU)
-        self.wait_for_load_state("networkidle")
-    
-    @allure.step("Navigate to Orders page")
-    def navigate_to_orders(self):
-        """Navigate to Orders page."""
-        # Wait for the orders menu to be available
-        self.wait_for_selector(self.ORDERS_MENU, state="visible")
-        # Scroll into view and click
-        self.page.locator(self.ORDERS_MENU).scroll_into_view_if_needed()
-        self.click(self.ORDERS_MENU)
-        self.wait_for_load_state("networkidle")
-    
-    @allure.step("Click Deal tile")
-    def click_deal_tile(self):
-        """Click on Deal tile to create new deal."""
-        self.click(self.DEAL_TILE)
-        self.wait_for_load_state("networkidle")
-    
-    @allure.step("Click Order tile")
-    def click_order_tile(self):
-        """Click on Order tile to create new order."""
-        self.click(self.ORDER_TILE)
-        self.wait_for_load_state("networkidle")
-    
-    @allure.step("Logout from dashboard")
-    def logout(self):
-        """Logout from the application."""
-        self.click(self.USER_MENU)
-        self.click(self.LOGOUT_BUTTON)
-    
-    # ========================================================================
-    # VALIDATIONS
-    # ========================================================================
-    
-    @allure.step("Verify dashboard is displayed")
-    def verify_dashboard_loaded(self):
-        """Verify dashboard page is fully loaded."""
-        self.assert_visible(self.DEALS_MENU)
-        self.assert_visible(self.ORDERS_MENU)
+“”“Page object for FX Trading dashboard.”””
+
+```
+# ========================================================================
+# LOCATORS  (properties returning Locator objects — no raw strings)
+# ========================================================================
+
+@property
+def fx_web_app_widget(self) -> Locator:
+    """The solar-starlink web component that hosts the FX Web App launcher."""
+    return self.page.locator("solar-starlink-widget")
+
+@property
+def fx_web_app_launch_button(self) -> Locator:
+    """Launch button inside the FX Web App widget (shadow-DOM safe chaining)."""
+    return (
+        self.fx_web_app_widget
+        .filter(has_text="FX Web App Quick and easy")
+        .get_by_role("button")
+    )
+
+@property
+def deals_menu(self) -> Locator:
+    return self.page.get_by_role("link", name="Deals")
+
+@property
+def orders_menu(self) -> Locator:
+    return self.page.get_by_role("link", name="Orders")
+
+@property
+def settings_menu(self) -> Locator:
+    return self.page.get_by_role("link", name="Settings")
+
+@property
+def trade_manager_link(self) -> Locator:
+    return self.page.get_by_role("link", name="Trade Manager")
+
+@property
+def deal_tile(self) -> Locator:
+    """Primary: test-id; no silent fallback — missing test-id is an app bug."""
+    return self.page.get_by_test_id("deal-tile")
+
+@property
+def order_tile(self) -> Locator:
+    return self.page.get_by_test_id("order-tile")
+
+@property
+def user_menu_button(self) -> Locator:
+    return self.page.get_by_role("button", name="User menu")
+
+@property
+def logout_button(self) -> Locator:
+    return self.page.get_by_role("button", name="Logout")
+
+# ========================================================================
+# ACTIONS
+# ========================================================================
+
+@allure.step("Launch FX Web App from widget")
+def launch_fx_web_app(self) -> None:
+    """
+    Launch FX Web App via the solar-starlink dashboard widget.
+
+    Uses locator chaining instead of the broken `>>` shadow-DOM syntax.
+    Waits for the target URL rather than networkidle (unreliable with
+    persistent WebSocket connections common in FX trading systems).
+    """
+    self.fx_web_app_widget.wait_for(state="visible")
+    self.fx_web_app_launch_button.click()
+    self.page.wait_for_url("**/fx-web-app**")
+
+@allure.step("Navigate to Trade Manager")
+def navigate_to_trade_manager(self) -> None:
+    """Navigate to the Trade Manager page."""
+    self.trade_manager_link.click()
+    self.page.wait_for_url("**/trade-manager**")
+
+@allure.step("Navigate to Deals page")
+def navigate_to_deals(self) -> None:
+    """Navigate to the Deals page."""
+    self.deals_menu.click()
+    self.page.wait_for_url("**/deals**")
+
+@allure.step("Navigate to Orders page")
+def navigate_to_orders(self) -> None:
+    """Navigate to the Orders page."""
+    self.orders_menu.click()
+    self.page.wait_for_url("**/orders**")
+
+@allure.step("Click Deal tile")
+def click_deal_tile(self) -> None:
+    """Open the new-deal flow from the dashboard tile."""
+    self.deal_tile.click()
+    # Wait for the deal form/modal to appear rather than networkidle
+    self.page.get_by_role("dialog").wait_for(state="visible")
+
+@allure.step("Click Order tile")
+def click_order_tile(self) -> None:
+    """Open the new-order flow from the dashboard tile."""
+    self.order_tile.click()
+    self.page.get_by_role("dialog").wait_for(state="visible")
+
+@allure.step("Logout from dashboard")
+def logout(self) -> None:
+    """Log out of the application via the user menu."""
+    self.user_menu_button.click()
+    self.logout_button.click()
+    # Confirm we land back on the login / unauthenticated page
+    self.page.wait_for_url("**/login**")
+
+# ========================================================================
+# VALIDATIONS
+# ========================================================================
+
+@allure.step("Verify dashboard is displayed")
+def verify_dashboard_loaded(self) -> None:
+    """
+    Confirm the dashboard is fully rendered.
+
+    Checks three independent signals:
+      1. Top-level navigation links are present.
+      2. The FX Web App widget is visible.
+      3. Both action tiles are visible.
+    """
+    self.deals_menu.wait_for(state="visible")
+    self.orders_menu.wait_for(state="visible")
+    self.fx_web_app_widget.wait_for(state="visible")
+    self.deal_tile.wait_for(state="visible")
+    self.order_tile.wait_for(state="visible")
+```
